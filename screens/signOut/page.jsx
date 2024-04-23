@@ -8,7 +8,7 @@ export default function SignOutScreen({ navigation }) {
       // Clear user data from AsyncStorage
       await AsyncStorage.removeItem('user');
       // Navigate back to the login screen
-      navigation.navigate('Login');
+      navigation.navigate('SignIn');
     } catch (error) {
       console.error('Error signing out:', error);
     }

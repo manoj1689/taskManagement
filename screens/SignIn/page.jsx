@@ -1,41 +1,56 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Button} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/Ionicons'; // Example import for FontAwesome icons
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function SignUpScreen({navigation}) {
+export default function SignInScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true); // Indicates if we're still checking the authentication status
+
   const USER_KEY = 'user';
 
-  const storeUserData = async userData => {
+  useEffect(() => {
+    checkAuthentication(); // Check authentication status when component mounts
+  }, []);
+
+  const checkAuthentication = async () => {
     try {
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+      const userData = await AsyncStorage.getItem(USER_KEY);
+      if (userData) {
+        // If user data exists in AsyncStorage, navigate to the Home screen
+        console.log('userData', userData);
+        navigation.navigate('Home');
+      }
     } catch (error) {
-      console.error('Error storing user data:', error);
+      console.error('Error getting user data:', error);
+    } finally {
+      setLoading(false); // Finished checking authentication status
     }
   };
 
-  const handleSignUp = async () => {
-    if (!validateEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address.');
-      return;
-    }
+  const handleLogin = async () => {
+    try {
+      if (!validateEmail(email)) {
+        Alert.alert('Invalid Email', 'Please enter a valid email address.');
+        return;
+      }
 
-    if (email && password) {
-      await storeUserData({email, password});
-      navigation.navigate('Name');
-    } else {
-      alert('Please enter both username and password');
+      const userData = await AsyncStorage.getItem(USER_KEY);
+      if (userData) {
+        const parsedUserData = JSON.parse(userData);
+        if (parsedUserData.email === email && parsedUserData.password === password) {
+          navigation.navigate('Home');
+        } else {
+          Alert.alert('Invalid credentials');
+        }
+      } else {
+        Alert.alert('No user found. Please sign up.');
+      }
+    } catch (error) {
+      console.error('Error getting user data:', error);
+      Alert.alert('An error occurred. Please try again.');
     }
   };
 
@@ -44,6 +59,14 @@ export default function SignUpScreen({navigation}) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -54,7 +77,7 @@ export default function SignUpScreen({navigation}) {
         />
         <View style={styles.TextBox}>
           <Text style={styles.headerText}>
-            Hi, I am Donna. Let's create a account for you
+            Hi, Welocme back to Donna. Let's Login
           </Text>
         </View>
       </View>
@@ -92,16 +115,16 @@ export default function SignUpScreen({navigation}) {
       </View>
       <View style={styles.buttonContainer}>
         <Button
-          title="SIGN UP"
-          onPress={handleSignUp}
-          buttonStyle={{backgroundColor: '#02093B'}} // Change button color here
+          title="LOGIN"
+          onPress={handleLogin}
+          buttonStyle={{ backgroundColor: '#02093B' }} // Change button color here
         />
       </View>
       <View style={styles.bottom}>
-        <Text style={styles.BottomText}>Already having an account?</Text>
+        <Text style={styles.BottomText}>Don't have an account?</Text>
         <Button
-          title="Sign In"
-          onPress={() => navigation.navigate('Login')}
+          title="Sign Up"
+          onPress={() => navigation.navigate('SignUp')}
           raised
           buttonStyle={{
             backgroundColor: '#ffff',
@@ -113,7 +136,7 @@ export default function SignUpScreen({navigation}) {
             marginHorizontal: 50,
             marginVertical: 10,
           }}
-          titleStyle={{marginHorizontal: 20, color: 'black'}}
+          titleStyle={{ marginHorizontal: 20, color: 'black' }}
         />
       </View>
     </ScrollView>
