@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { Button } from 'react-native-elements';
+import { View, Text, TextInput, StyleSheet,ScrollView, TouchableOpacity } from 'react-native';
+import { Button} from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 const JobProfileSuggestions = [
   "Software Developer",
   "Data Analyst",
@@ -42,21 +42,42 @@ const SelectSkillScreen = ({ navigation }) => {
   const renderJobSuggestions = () => {
     return JobProfileSuggestions.map((job, index) => (
       <TouchableOpacity key={index} style={styles.suggestionItem} onPress={() => handleSelectJob(job)}>
-        <Text>{job}</Text>
+        <Text style={styles.suggestionItemText}>{job}</Text>
       </TouchableOpacity>
     ));
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
+    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.screenView} >
+    <View style={styles.headerTittle}>
+    <Icon
+      name="arrow-back-outline"
+      type="font-awesome"
+      size={22}
+      style={styles.icon}
+      onPress={()=>navigation.navigate('Name')}
+    />
+    <Text style={styles.text}>Select Skill</Text>
+    </View>
+    <View style={styles.inputContainer}>
+          <Icon
+            name="search"
+            type="font-awesome"
+            size={22}
+            style={styles.iconContainer}
+          />
+          <TextInput
+         style={styles.input}
         placeholder="Search for your Skill"
         onFocus={() => navigation.navigate('SearchSkill')}
       />
+        </View>
+    
+  </View>
       {selectedJobs.length > 0 && (
         <View style={styles.selectedJobsContainer}>
-          <Text>Selected Jobs:</Text>
+          
           <View style={styles.selectedJobs}>
             {selectedJobs.map((job, index) => (
               <Text key={index} style={styles.selectedJob}>{job}</Text>
@@ -64,48 +85,88 @@ const SelectSkillScreen = ({ navigation }) => {
           </View>
         </View>
       )}
+      <View style={styles.bottomButton}>
       <View style={styles.suggestionsContainer}>
         {renderJobSuggestions()}
       </View>
       <Button
         title="DONE"
         onPress={storeSelectedJobs}
-        buttonStyle={{ backgroundColor: '#02093B' }} // Change button color here
+        buttonStyle={{backgroundColor: '#02093B',borderRadius:0 ,padding:15,margin:0}} // Change button color here
       />
-    </View>
+      </View>
+      
+     
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    flexGrow: 1,
+    paddingVertical: 10,
   },
-  searchInput: {
+  screenView:{
+   padding:20,
+  },
+  headerTittle:{
+    flexDirection: 'row', // Arrange children in a row
+    alignItems: 'center', // Center children vertically
+    fontWeight:'600'
+  },
+  icon: {
+    marginRight: 8, // Add space between icon and text
+    color: 'black', // Set color to black
+  },
+  text: {
+    marginLeft:30,
+    fontSize:24,
+    color: 'black',
+  },
+  inputContainer: {
+    marginTop:20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'black',
+    padding: 9,
+    backgroundColor: '#e6e6e6',
+  },
+  input: {
+    flex: 1,
     height: 40,
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    marginBottom: 20,
-    backgroundColor: '#f0f0f0',
+    borderWidth: 2,
+    borderColor: '#e6e6e6',
+    backgroundColor: '#e6e6e6',
+    paddingLeft: 8,
   },
   suggestionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    backgroundColor:"#e6e6e6",
+    paddingTop:30,
+    paddingBottom:20
   },
   suggestionItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 20,
     margin: 5,
+   
+  },
+  suggestionItemText:{
+    color:'#020B4A'
   },
   selectedJobsContainer: {
-    marginBottom: 20,
+    margin: 20,
   },
   selectedJobs: {
     flexDirection: 'row',
@@ -117,10 +178,20 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 20,
     marginRight: 5,
     marginBottom: 5,
+    color:'white',
+    backgroundColor:'#02093B'
+  },
+  bottomButton: {
+    width:'100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
 
 export default SelectSkillScreen;
+

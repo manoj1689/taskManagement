@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Modal, Button as RNButton } from 'react-native';
-import { Button } from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Modal,
+  TouchableOpacity
+} from 'react-native';
+import { Button, CheckBox } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const JobProfileSuggestions = [
   "Software Developer",
@@ -16,87 +25,118 @@ const JobProfileSuggestions = [
   "Sales Representative",
 ];
 
-const SearchSkillScreen = ({navigation}) => {
+const SearchSkillScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedJobs, setSelectedJobs] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
-  useEffect(() => {
-    // Store selected jobs in AsyncStorage whenever selectedJobs state changes
-    storeSelectedJobs();
-  }, [selectedJobs]);
-
-  const handleSelectJob = (job) => {
-    if (selectedJobs.includes(job)) {
-      setSelectedJobs(selectedJobs.filter(selectedJob => selectedJob !== job));
-    } else {
-      setSelectedJobs([...selectedJobs, job]);
-    }
-    setSearchQuery('');
-  };
-
   const storeSelectedJobs = async () => {
     try {
-      await AsyncStorage.setItem('selectedJobs', JSON.stringify(selectedJobs)); // Store selected jobs in AsyncStorage
+      await AsyncStorage.setItem('selectedJobs', JSON.stringify(selectedJobs));
     } catch (error) {
       console.error('Error storing selected jobs:', error);
     }
   };
 
+  useEffect(() => {
+    storeSelectedJobs();
+  }, [selectedJobs]);
+
+  const handleSelectJob = (job) => {
+    if (selectedJobs.includes(job)) {
+      setSelectedJobs(selectedJobs.filter((selectedJob) => selectedJob !== job));
+    } else {
+      setSelectedJobs([...selectedJobs, job]);
+    }
+  };
+
   const handleAddData = () => {
     if (inputValue.trim() !== '') {
-      setSelectedJobs([...selectedJobs, inputValue]); // Add inputValue to selectedJobs array
+      setSelectedJobs([...selectedJobs, inputValue]);
       setInputValue('');
-      setModalVisible(false); // Close the modal after adding data
+      setModalVisible(false);
     }
   };
 
   const renderJobSuggestions = () => {
-    if (searchQuery === '') {
-      return null; // If search query is empty, don't render any suggestions
-    }
-
-    const filteredJobs = JobProfileSuggestions.filter(job =>
+    const filteredJobs = JobProfileSuggestions.filter((job) =>
       job.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (filteredJobs.length === 0) {
-      return (
-        <Text>No matching job profiles found.</Text>
-      );
+      return <Text>No matching job profiles found.</Text>;
     }
 
     return (
       <ScrollView style={styles.suggestionsContainer}>
-        {filteredJobs.map((job, index) => (
-          <TouchableOpacity key={index} style={[styles.suggestionItem, selectedJobs.includes(job) && styles.selectedSuggestion]} onPress={() => handleSelectJob(job)}>
-            <Text>{job}</Text>
-          </TouchableOpacity>
-        ))}
+       
+          <>
+         {filteredJobs.map((job, index) => (
+        <View
+          key={index}
+          style={[
+            styles.suggestionListCol,
+            selectedJobs.includes(job) && styles.selectedBackground, // Change background color when checked
+          ]}
+        >
+          <CheckBox
+            checked={selectedJobs.includes(job)}
+            onPress={() => handleSelectJob(job)}
+            iconType="material-community"
+            checkedIcon="checkbox-outline"
+            uncheckedIcon="checkbox-blank-outline"
+            checkedColor="#02093B"
+          />
+          <Text
+            style={[
+              styles.jobText,
+              selectedJobs.includes(job) && { fontWeight:500 }, // Change text color when checked
+            ]}
+          >
+            {job}
+          </Text>
+        </View>
+      ))}
+           
+          </>
+         
+       
       </ScrollView>
     );
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search for job profiles"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
-      <View style={styles.selectedJobsContainer}>
-        {selectedJobs.map((job, index) => (
-          <TouchableOpacity key={index} style={styles.selectedJob} onPress={() => handleSelectJob(job)}>
-            <Text>{job}</Text>
-          </TouchableOpacity>
-        ))}
+      <View style={styles.headerTitle}>
+        <Icon
+          name="arrow-back-outline"
+          size={22}
+          style={styles.icon}
+          onPress={() => navigation.goBack()} 
+        />
+        <Text style={styles.text}>Search for Your Skills</Text>
       </View>
+
+      <View style={styles.inputContainer}>
+        <Icon name="search" size={22} style={styles.iconContainer} />
+        <TextInput
+          style={styles.input}
+          placeholder="Search for job profiles"
+          value={searchQuery}
+          onChangeText={(text) => {
+            setSearchQuery(text);
+            setSelectedJobs([]);
+          }}
+        />
+      </View>
+
       {renderJobSuggestions()}
+
       <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
-        <Text>Add Skill</Text>
-      </TouchableOpacity>
+      <Icon name="add-outline" size={38} style={styles.addIcon} />
+      </TouchableOpacity> 
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -105,25 +145,30 @@ const SearchSkillScreen = ({navigation}) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add Data</Text>
+            <Text style={styles.modalTitle}>Add New Skill</Text>
+            <Text style={styles.modalTagline}>Please Enter Skill you want to Add</Text>
             <TextInput
-              style={styles.input}
-              placeholder="Enter data"
+              placeholder="Enter new skill"
               value={inputValue}
-              onChangeText={text => setInputValue(text)}
+              onChangeText={(text) => setInputValue(text)}
             />
-            <TouchableOpacity style={styles.addButton} onPress={handleAddData}>
-              <Text style={styles.buttonText}>Add</Text>
-            </TouchableOpacity>
-            <RNButton title="Close" onPress={() => setModalVisible(false)} />
+            <View style={styles.alertText}>
+            <Icon name="alert-circle" size={18} style={styles.NotifyIcon} />
+            <Text style={styles.alertTagline}>New Skill will be approved by admin</Text>
+            </View>
+            <TouchableOpacity onPress={handleAddData} style={{backgroundColor: '#02093B' ,width:"100%",borderRadius:0 ,padding:15,margin:0}}><Text style={styles.modelAddText}>ADD</Text></TouchableOpacity>
+           
           </View>
         </View>
       </Modal>
-      <Button
-        title="DONE"
-        onPress={() => navigation.navigate('SignIn')}
-        buttonStyle={{ backgroundColor: '#02093B' }} // Change button color here
-      />
+
+      <View style={styles.doneButtonContainer}>
+        <Button
+          title="DONE"
+          onPress={() => navigation.navigate('SignIn')}
+          buttonStyle={{backgroundColor: '#02093B',borderRadius:0 ,padding:15,margin:0}} 
+        />
+      </View>
     </View>
   );
 };
@@ -131,50 +176,65 @@ const SearchSkillScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingVertical: 10,
   },
-  searchInput: {
+  headerTitle: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 20,
+  },
+  icon: {
+    marginRight: 10, 
+    color: 'black',
+  },
+  text: {
+    flex: 1, 
+    fontSize: 24,
+    color: 'black',
+    textAlign: 'center', 
+  },
+  inputContainer: {
+    margin:20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'black',
+    padding: 9,
+    backgroundColor: '#e6e6e6',
+  },
+  input: {
+    flex: 1,
     height: 40,
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#e6e6e6',
+    backgroundColor: '#e6e6e6',
+    paddingLeft: 8,
   },
   suggestionsContainer: {
     marginTop: 10,
-    maxHeight: 200,
   },
-  suggestionItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 5,
+  jobText:{
+    color:"#020E5D"
   },
-  selectedSuggestion: {
-    backgroundColor: 'lightblue',
+  selectedBackground:{
+    backgroundColor:'#dcebf1'
   },
-  selectedJobsContainer: {
+  suggestionListCol:{
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 10,
+    alignItems:'center',
+    borderBottomWidth:1,
+    borderBlockColor:'#99FFFF',
+    marginHorizontal:10,
+    backgroundColor:'#fff'
   },
-  selectedJob: {
-    backgroundColor: 'lightblue',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  addButton: {
-    marginTop: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5,
-    alignItems: 'center',
+  doneButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
   modalContainer: {
     flex: 1,
@@ -184,24 +244,61 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
+    width: '90%',
     alignItems: 'center',
   },
   modalTitle: {
+    width:"100%",
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color:'#020E5D',
+    padding:10,
+    textAlign:'center',
+    borderBottomWidth:1,
+    borderBottomColor:'#99FFFF',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    width: '100%',
+  modalTagline:{
+    color:"black",
+    fontSize:14,
+    marginTop:30
   },
+  alertTagline:{
+    color:'black',
+    fontSize:12,
+    marginBottom:30,
+    paddingLeft:10
+  },
+  alertText:{
+    flexDirection: 'row',
+  },
+  NotifyIcon:{
+    color:'#02093B'
+  },
+  modelAddText:{
+    color:'white',
+    textAlign:'center',
+    fontSize:16
+  },
+  addButton: {
+    position: 'absolute', 
+    bottom: 80,          
+    right: 20,            
+    borderWidth: 0,       
+    borderColor: 'gray',
+    borderRadius: 50,    
+    alignItems: 'center',
+    justifyContent: 'center', 
+    backgroundColor: '#02093B', 
+    elevation: 6,         
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    padding: 15,         
+  },
+  addIcon:{
+    color:'#fff'
+  }
 });
 
 export default SearchSkillScreen;
