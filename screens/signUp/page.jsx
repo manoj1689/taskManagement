@@ -6,6 +6,9 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +18,8 @@ import Icon from 'react-native-vector-icons/Ionicons'; // Example import for Fon
 export default function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const USER_KEY = 'user';
 
   const storeUserData = async userData => {
@@ -24,7 +29,14 @@ export default function SignUpScreen({navigation}) {
       console.error('Error storing user data:', error);
     }
   };
-
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    if (!validateEmail(text)) {
+      setEmailError('Invalid email format'); // Set error message
+    } else {
+      setEmailError(''); // Clear error message
+    }
+  };
   const handleSignUp = async () => {
     if (!validateEmail(email)) {
       Alert.alert('Invalid Email', 'Please enter a valid email address.');
@@ -35,7 +47,7 @@ export default function SignUpScreen({navigation}) {
       await storeUserData({email, password});
       navigation.navigate('Name');
     } else {
-      alert('Please enter both username and password');
+      Alert.alert('Please enter both username and password');
     }
   };
 
@@ -46,8 +58,13 @@ export default function SignUpScreen({navigation}) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{flex:1}}
+      keyboardVerticalOffset={20}>
+    
+        <ScrollView contentContainerStyle={styles.inner}>
+        <View style={styles.header}>
         <Image
           source={require('../assets/business.png')}
           style={styles.image}
@@ -71,9 +88,19 @@ export default function SignUpScreen({navigation}) {
             style={styles.input}
             placeholder="Email id"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={handleEmailChange}
           />
+      
         </View>
+ 
+        {emailError !== '' && (
+          <View style={styles.emailError}>
+            <Icon name="alert-circle" size={16} style={styles.NotifyIcon} />
+            <Text style={styles.errorText}>{emailError}</Text>
+          </View>
+           
+          )}
+      
         <View style={styles.inputContainer}>
           <Icon
             name="briefcase"
@@ -101,11 +128,12 @@ export default function SignUpScreen({navigation}) {
         <Text style={styles.BottomText}>Already having an account?</Text>
         <Button
           title="Sign In"
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => navigation.navigate('SignIn')}
           raised
           buttonStyle={{
             backgroundColor: '#ffff',
             borderRadius: 3,
+           
           }}
           containerStyle={{
             height: 40,
@@ -116,16 +144,14 @@ export default function SignUpScreen({navigation}) {
           titleStyle={{marginHorizontal: 20, color: 'black'}}
         />
       </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
+    
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
+ 
   header: {
     marginTop: 50,
     justifyContent: 'center',
@@ -135,6 +161,11 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 20,
+  },
+  inner: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   TextBox: {
     marginTop: 50,
@@ -156,10 +187,24 @@ const styles = StyleSheet.create({
   form: {
     width: '85%',
   },
+  errorText: {
+    color: 'red', // Display error messages in red
+    fontSize: 12,
+    paddingLeft:10
+
+   
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom:10,
+    marginTop:10
+  },
+  NotifyIcon:{
+    color:'red'
+  },
+  emailError:{
+    flexDirection: 'row',
   },
   iconContainer: {
     justifyContent: 'center',
@@ -184,9 +229,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
   },
   bottom: {
-    flex: 3,
-    marginBottom: 50, // Set margin bottom here
-    paddingVertical: 10, // Optional: Add padding for better appearance
+    marginTop:80,
+    marginBottom:30,
     justifyContent: 'center',
     alignItems: 'center',
   },

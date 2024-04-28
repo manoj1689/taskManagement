@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet,Image,ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet,Image,ScrollView, KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons'; 
@@ -18,17 +18,22 @@ export default function NameScreen({ navigation }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.screenView} >
-      <View style={styles.headerTittle}>
-      <Icon onPress={()=>navigation.navigate("SignUp")}
-        name="arrow-back-outline"
-        type="font-awesome"
-        size={22}
-        style={styles.icon}
-      />
-      <Text style={styles.text}>Hi, It's nice to meet you</Text>
-      </View>
+    <>
+        <View style={styles.headerTittle}>
+    <Icon onPress={()=>navigation.navigate("SignUp")}
+      name="arrow-back-outline"
+      type="font-awesome"
+      size={22}
+      style={styles.icon}
+    />
+    <Text style={styles.text}>Hi, It's nice to meet you</Text>
+    </View>
+    <ScrollView contentContainerStyle={styles.inner}>
+       
+  
+     
+      <View style={styles.HeaderView} >
+    
       <Text style={styles.headerNotice}>Let's add your Profile Picture and Name.That way people will recognise you</Text>
       <View style={styles.Logo}>
       <Image
@@ -37,16 +42,20 @@ export default function NameScreen({ navigation }) {
         />
         <Text style={styles.nameText}>What can i call you ?</Text>
       </View>
-      
+      <View style={styles.MiddleView}>
       <TextInput
         style={styles.input}
         placeholder="Enter your Name"
         value={name}
         onChangeText={setName}
       />
+
+      </View>
+    
      
     </View>
-    <View style={styles.bottomButton}>
+   
+    <View style={styles.BottomView}>
         
         <Button
           title="NEXT"
@@ -54,23 +63,31 @@ export default function NameScreen({ navigation }) {
           buttonStyle={{backgroundColor: '#02093B',borderRadius:0 ,padding:15,margin:0}} // Change button color here
         />
       </View>
-    </ScrollView>
     
+    </ScrollView>
+   
+    </>
+
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  inner: {
     flexGrow: 1,
-    paddingVertical: 10,
   },
-  screenView:{
-   padding:20,
+  HeaderView:{
+   flex:3,
+   padding:20
+   
+  },
+  MiddleView:{
+    flex:2,
   },
   headerTittle:{
     flexDirection: 'row', // Arrange children in a row
     alignItems: 'center', // Center children vertically
-    fontWeight:'600'
+    fontWeight:'600',
+    padding:10
   },
   icon: {
     marginRight: 8, // Add space between icon and text
@@ -112,11 +129,8 @@ nameText:{
     paddingLeft: 8,
   },
 
-  bottomButton: {
-    width:'100%',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
+BottomView:{
+ flex:1,
+ justifyContent: 'flex-end',
+}
 });

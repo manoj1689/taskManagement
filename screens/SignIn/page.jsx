@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, Image, Alert,KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -69,7 +69,11 @@ export default function SignInScreen({ navigation }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{flex:1}}
+      keyboardVerticalOffset={20}>
+        <ScrollView contentContainerStyle={styles.inner}>
       <View style={styles.header}>
         <Image
           source={require('../assets/business.png')}
@@ -140,15 +144,14 @@ export default function SignInScreen({ navigation }) {
         />
       </View>
     </ScrollView>
+
+
+      </KeyboardAvoidingView>
+    
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
   header: {
     marginTop: 50,
     justifyContent: 'center',
@@ -158,6 +161,11 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 20,
+  },
+  inner: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   TextBox: {
     marginTop: 50,
@@ -179,10 +187,24 @@ const styles = StyleSheet.create({
   form: {
     width: '85%',
   },
+  errorText: {
+    color: 'red', // Display error messages in red
+    fontSize: 12,
+    paddingLeft:10
+
+   
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom:10,
+    marginTop:10
+  },
+  NotifyIcon:{
+    color:'red'
+  },
+  emailError:{
+    flexDirection: 'row',
   },
   iconContainer: {
     justifyContent: 'center',
@@ -207,9 +229,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
   },
   bottom: {
-    flex: 3,
-    marginBottom: 50, // Set margin bottom here
-    paddingVertical: 10, // Optional: Add padding for better appearance
+    marginTop:80,
+    marginBottom:30,
     justifyContent: 'center',
     alignItems: 'center',
   },

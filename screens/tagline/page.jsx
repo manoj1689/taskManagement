@@ -21,23 +21,26 @@ export default function TaglineScreen({ navigation }) {
 
  
 return (
+  <>
+  <View style={styles.headerTittle}>
+  <Icon
+    name="arrow-back-outline"
+    type="font-awesome"
+    size={22}
+    style={styles.icon}
+    onPress={()=>navigation.navigate('Name')}
+  />
+  <Text style={styles.text}>We are almost done !!</Text>
+  </View>
   <ScrollView contentContainerStyle={styles.container}>
-    <View style={styles.screenView} >
-    <View style={styles.headerTittle}>
-    <Icon
-      name="arrow-back-outline"
-      type="font-awesome"
-      size={22}
-      style={styles.icon}
-      onPress={()=>navigation.navigate('Name')}
-    />
-    <Text style={styles.text}>We are almost done !!</Text>
-    </View>
+    <View style={styles.HeaderView} >
+   
     <Text style={styles.headerNotice}>Let's add your Profile Picture and Name.That way people will recognise you</Text>
     <View style={styles.Logo}>
       <Text style={styles.nameText}>Please add tagline to your Profile</Text>
     </View>
     
+    <View style={styles.MiddleView}>
     <TextInput
       style={styles.input}
       placeholder="Enter your Tagline"
@@ -55,8 +58,11 @@ return (
       onChangeText={setOrganization}
     />
   </View>
+
+    </View>
+   
   
-  <View style={styles.bottomButton}>
+  <View style={styles.BottomView}>
       
       <Button
         title="NEXT"
@@ -66,21 +72,25 @@ return (
     </View>
   </ScrollView>
   
+  </>
+  
+  
 );
 }
 
 const styles = StyleSheet.create({
 container: {
   flexGrow: 1,
-  paddingVertical: 10,
 },
-screenView:{
+HeaderView:{
+ flex:2,
  padding:20,
 },
 headerTittle:{
   flexDirection: 'row', // Arrange children in a row
   alignItems: 'center', // Center children vertically
-  fontWeight:'600'
+  fontWeight:'600',
+  padding:10
 },
 icon: {
   marginRight: 8, // Add space between icon and text
@@ -121,12 +131,12 @@ input: {
   backgroundColor: '#e6e6e6',
   paddingLeft: 8,
 },
-
-bottomButton: {
-  width:'100%',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
+MiddleView:{
+ flex:3
 },
+
+BottomView:{
+  flex:1,
+  justifyContent: 'flex-end',
+ }
 });
