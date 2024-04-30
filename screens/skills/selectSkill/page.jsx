@@ -41,8 +41,22 @@ const SelectSkillScreen = ({ navigation }) => {
 
   const renderJobSuggestions = () => {
     return JobProfileSuggestions.map((job, index) => (
-      <TouchableOpacity key={index} style={styles.suggestionItem} onPress={() => handleSelectJob(job)}>
-        <Text style={styles.suggestionItemText}>{job}</Text>
+      <TouchableOpacity
+        key={index}
+        style={[
+          styles.suggestionItem,
+          selectedJobs.includes(job) && styles.selectedSuggestionItem, // Apply different style if selected
+        ]}
+        onPress={() => handleSelectJob(job)}
+      >
+        <Text
+          style={[
+            styles.suggestionItemText,
+            selectedJobs.includes(job) && styles.selectedSuggestionItemText, // Change text color if selected
+          ]}
+        >
+          {job}
+        </Text>
       </TouchableOpacity>
     ));
   };
@@ -70,7 +84,7 @@ const SelectSkillScreen = ({ navigation }) => {
           <TextInput
          style={styles.input}
         placeholder="Search for your Skill"
-        onFocus={() => navigation.navigate('SearchSkill')}
+        onFocus={() => navigation.navigate('SearchSkill',{selectedJobsList:selectedJobs})}
       />
         </View>
     
@@ -164,6 +178,12 @@ const styles = StyleSheet.create({
   },
   suggestionItemText:{
     color:'#020B4A'
+  },
+  selectedSuggestionItem: {
+    backgroundColor: '#02093B', // Light blue for selected items
+  },
+  selectedSuggestionItemText: {
+    color: 'white', // Blue for selected text
   },
   selectedJobsContainer: {
     margin: 20,

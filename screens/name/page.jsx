@@ -19,7 +19,7 @@ export default function NameScreen({ navigation }) {
 
   return (
     <>
-        <View style={styles.headerTittle}>
+       <View style={styles.headerTittle}>
     <Icon onPress={()=>navigation.navigate("SignUp")}
       name="arrow-back-outline"
       type="font-awesome"
@@ -28,6 +28,8 @@ export default function NameScreen({ navigation }) {
     />
     <Text style={styles.text}>Hi, It's nice to meet you</Text>
     </View>
+
+<KeyboardAvoidingView behavior="padding" enabled style={{flex: 1}}>
     <ScrollView contentContainerStyle={styles.inner}>
        
   
@@ -66,7 +68,9 @@ export default function NameScreen({ navigation }) {
     
     </ScrollView>
    
+    </KeyboardAvoidingView>
     </>
+     
 
   );
 }

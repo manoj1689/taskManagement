@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet,ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet,ScrollView,KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons'; 
@@ -32,6 +32,7 @@ return (
   />
   <Text style={styles.text}>We are almost done !!</Text>
   </View>
+  <KeyboardAvoidingView behavior="padding" enabled style={{flex: 1}}>
   <ScrollView contentContainerStyle={styles.container}>
     <View style={styles.HeaderView} >
    
@@ -71,7 +72,7 @@ return (
       />
     </View>
   </ScrollView>
-  
+  </KeyboardAvoidingView>
   </>
   
   

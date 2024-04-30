@@ -25,9 +25,11 @@ const JobProfileSuggestions = [
   "Sales Representative",
 ];
 
-const SearchSkillScreen = ({ navigation }) => {
+const SearchSkillScreen = ({ navigation,route }) => {
+
+  const selectedJobsList = route.params?.selectedJobsList || []; 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedJobs, setSelectedJobs] = useState([]);
+  const [selectedJobs, setSelectedJobs] = useState(selectedJobsList);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
 

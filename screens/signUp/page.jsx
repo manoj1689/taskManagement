@@ -6,9 +6,8 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  SafeAreaView,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,7 +28,7 @@ export default function SignUpScreen({navigation}) {
       console.error('Error storing user data:', error);
     }
   };
-  const handleEmailChange = (text) => {
+  const handleEmailChange = text => {
     setEmail(text);
     if (!validateEmail(text)) {
       setEmailError('Invalid email format'); // Set error message
@@ -58,100 +57,93 @@ export default function SignUpScreen({navigation}) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex:1}}
-      keyboardVerticalOffset={20}>
-    
-        <ScrollView contentContainerStyle={styles.inner}>
+    <KeyboardAvoidingView behavior="padding" enabled style={{flex: 1}}>
+      <ScrollView
+        contentContainerStyle={styles.inner}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-        <Image
-          source={require('../assets/business.png')}
-          style={styles.image}
-        />
-        <View style={styles.TextBox}>
-          <Text style={styles.headerText}>
-            Hi, I am Donna. Let's create a account for you
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputContainer}>
-          <Icon
-            name="mail"
-            type="font-awesome"
-            size={22}
-            style={styles.iconContainer}
+          <Image
+            source={require('../assets/business.png')}
+            style={styles.image}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Email id"
-            value={email}
-            onChangeText={handleEmailChange}
-          />
-      
-        </View>
- 
-        {emailError !== '' && (
-          <View style={styles.emailError}>
-            <Icon name="alert-circle" size={16} style={styles.NotifyIcon} />
-            <Text style={styles.errorText}>{emailError}</Text>
+          <View style={styles.TextBox}>
+            <Text style={styles.headerText}>
+              Hi, I am Donna. Let's create a account for you
+            </Text>
           </View>
-           
+        </View>
+
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <Icon
+              name="mail"
+              type="font-awesome"
+              size={22}
+              style={styles.iconContainer}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email id"
+              value={email}
+              onChangeText={handleEmailChange}
+            />
+          </View>
+
+          {emailError !== '' && (
+            <View style={styles.emailError}>
+              <Icon name="alert-circle" size={16} style={styles.NotifyIcon} />
+              <Text style={styles.errorText}>{emailError}</Text>
+            </View>
           )}
-      
-        <View style={styles.inputContainer}>
-          <Icon
-            name="briefcase"
-            type="font-awesome"
-            size={22}
-            style={styles.iconContainer}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
+
+          <View style={styles.inputContainer}>
+            <Icon
+              name="briefcase"
+              type="font-awesome"
+              size={22}
+              style={styles.iconContainer}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="SIGN UP"
+            onPress={handleSignUp}
+            buttonStyle={{backgroundColor: '#02093B'}} // Change button color here
           />
         </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="SIGN UP"
-          onPress={handleSignUp}
-          buttonStyle={{backgroundColor: '#02093B'}} // Change button color here
-        />
-      </View>
-      <View style={styles.bottom}>
-        <Text style={styles.BottomText}>Already having an account?</Text>
-        <Button
-          title="Sign In"
-          onPress={() => navigation.navigate('SignIn')}
-          raised
-          buttonStyle={{
-            backgroundColor: '#ffff',
-            borderRadius: 3,
-           
-          }}
-          containerStyle={{
-            height: 40,
-            width: 200,
-            marginHorizontal: 50,
-            marginVertical: 10,
-          }}
-          titleStyle={{marginHorizontal: 20, color: 'black'}}
-        />
-      </View>
+        <View style={styles.bottom}>
+          <Text style={styles.BottomText}>Already having an account?</Text>
+          <Button
+            title="Sign In"
+            onPress={() => navigation.navigate('SignIn')}
+            raised
+            buttonStyle={{
+              backgroundColor: '#ffff',
+              borderRadius: 3,
+            }}
+            containerStyle={{
+              height: 40,
+              width: 200,
+              marginHorizontal: 50,
+              marginVertical: 10,
+            }}
+            titleStyle={{marginHorizontal: 20, color: 'black'}}
+          />
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
-    
   );
 }
 
 const styles = StyleSheet.create({
- 
   header: {
     marginTop: 50,
     justifyContent: 'center',
@@ -190,20 +182,18 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red', // Display error messages in red
     fontSize: 12,
-    paddingLeft:10
-
-   
+    paddingLeft: 10,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom:10,
-    marginTop:10
+    marginBottom: 10,
+    marginTop: 10,
   },
-  NotifyIcon:{
-    color:'red'
+  NotifyIcon: {
+    color: 'red',
   },
-  emailError:{
+  emailError: {
     flexDirection: 'row',
   },
   iconContainer: {
@@ -229,8 +219,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
   },
   bottom: {
-    marginTop:80,
-    marginBottom:30,
+    marginTop: 80,
+    marginBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },

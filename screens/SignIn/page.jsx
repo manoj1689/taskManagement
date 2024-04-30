@@ -70,7 +70,7 @@ export default function SignInScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    behavior="padding" enabled
       style={{flex:1}}
       keyboardVerticalOffset={20}>
         <ScrollView contentContainerStyle={styles.inner}>
